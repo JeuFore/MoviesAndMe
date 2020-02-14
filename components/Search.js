@@ -1,17 +1,29 @@
 import React from 'react'
 import { StyleSheet, View, TextInput, Button, FlatList, Text } from 'react-native'
 import films from '../helpers/filmsData'
+import FilmItem from './FilmItem'
+import { getFilmsFromApi } from '../api/TMDBApi'
 
 class Search extends React.Component {
+    constructor(props) {
+        super(props)
+        this._films = []
+    }
+
+    _loadFilms() {
+        const test = getFilmsFromApi("Stars Wars");
+        console.log(test.results)
+    }
     render() {
         return (
-            <View style={styles.view}>
+            <View style={styles.main}>
                 <TextInput placeholder='Titre du film' style={styles.textinput} />
-                <Button title='Rechercher' onPress={() => { }} />
+                <Button title='Rechercher' onPress={() => this._loadFilms()} />
                 <FlatList
-                    data={films}
+                    data={this._films}
                     keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => <Text style={styles.text}>{item.title}</Text>}
+                    renderItem={({ item }) => <FilmItem data={item} />}
+                    style={styles.filmItem}
                 />
             </View>
         )
@@ -19,7 +31,7 @@ class Search extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    view: {
+    main: {
         marginTop: 24,
         backgroundColor: '#273036',
         flex: 1
@@ -33,8 +45,8 @@ const styles = StyleSheet.create({
         borderStyle: 'solid',
         color: 'white'
     },
-    text: {
-        color: 'white'
+    filmItem: {
+        margin: 15
     }
 })
 
