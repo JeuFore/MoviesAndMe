@@ -1,7 +1,8 @@
 import React from 'react'
-import { StyleSheet, View, TextInput, Button, FlatList, Text, ActivityIndicator } from 'react-native'
-import FilmItem from './FilmItem'
-import { getFilmsFromApi, getFilmsFromApiWithSearchedText } from '../api/TMDBApi'
+import { StyleSheet, View, TextInput, Button, ActivityIndicator } from 'react-native'
+import { getFilmsFromApiWithSearchedText } from '../api/TMDBApi'
+import filmsData from '../helpers/filmsData'
+import FilmList from './FilmList'
 
 class Search extends React.Component {
     constructor(props) {
@@ -13,12 +14,13 @@ class Search extends React.Component {
         this.changeText = ""
         this.page = 0
         this.totalPages = 0
+        this._loadFilms = this._loadFilms.bind(this)
     }
 
-    searchFilms(){
+    searchFilms() {
         this.page = 0
         this.totalPages = 0
-        this.setState({ films: []})
+        this.setState({ films: [] })
         this._loadFilms()
     }
 
@@ -33,9 +35,19 @@ class Search extends React.Component {
                         requestStatus: false
                     })
                 });
-                this.page++
+            this.page++
         }
     }
+
+    _loadFilms1() {
+        this.setState({
+            requestStatus: false,
+            films: [...this.state.films, ...filmsData],
+        })
+        this.totalPages = 1
+        this.page++
+    }
+
     render() {
         return (
             <View style={styles.main}>
@@ -52,16 +64,13 @@ class Search extends React.Component {
                     </View>
                 )
                 }
-                <FlatList
-                    data={this.state.films}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => <FilmItem data={item} />}
-                    onEndReachedThreshold={0.5}
-                    onEndReached={() => {
-                        if (this.page < this.totalPages) {
-                            this._loadFilms()
-                        }
-                    }}
+                <FilmList
+                    films={this.state.films}
+                    navigation={this.props.navigation}
+                    loadFilms={this._loadFilms}
+                    page={this.page}
+                    totalPages={this.totalPages}
+                    favoriteList={false}
                 />
             </View>
         )
@@ -70,7 +79,6 @@ class Search extends React.Component {
 
 const styles = StyleSheet.create({
     main: {
-        marginTop: 24,
         backgroundColor: '#273036',
         flex: 1
     },
@@ -90,7 +98,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         right: 0,
-        top: 100,
+        top: 0,
         bottom: 0,
         alignItems: 'center',
         justifyContent: 'center'

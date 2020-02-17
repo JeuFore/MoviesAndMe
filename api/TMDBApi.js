@@ -24,6 +24,17 @@ export async function getFilmsFromApiWithSearchedText(text, page) {
   })
 }
 
+export async function getFilmDetail(idfilm) {
+  const url = `https://api.themoviedb.org/3/movie/${idfilm}?api_key=${API_TOKEN}&language=fr`
+  return await axios.get(url)
+  .then(function (response) {
+    return response.data;
+  })
+  .catch(function (error) {
+    console.log(error);
+  })
+}
+
 export function getImageApi(name) {
   if (name)
     return `https://image.tmdb.org/t/p/w300${name}`;
